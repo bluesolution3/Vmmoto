@@ -1,0 +1,2 @@
+<?php
+class Admin{ protected $pdo; public function __construct($pdo){$this->pdo=$pdo;} public function findByEmail($email){$s=$this->pdo->prepare('SELECT * FROM admins WHERE email=?');$s->execute([$email]);return $s->fetch();} public function findById($id){$s=$this->pdo->prepare('SELECT id,email,name,avatar FROM admins WHERE id=?');$s->execute([$id]);return $s->fetch();} public function updatePassword($id,$hash){$u=$this->pdo->prepare('UPDATE admins SET password=? WHERE id=?');return $u->execute([$hash,$id]);} }
