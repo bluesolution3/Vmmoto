@@ -1,0 +1,4 @@
+category_name,subcategory_name
+Food,Restaurants
+Food,Cafes
+Services,Plumbing

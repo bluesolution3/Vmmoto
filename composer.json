@@ -1,0 +1,17 @@
+{
+    "name": "gauta/ve-motto_admin",
+    "autoload": {
+        "psr-4": {
+            "Gauta\\VeMottoAdmin\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "bluesolution3",
+            "email": "patelgautam762@gmail.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^2.1"
+    }
+}
