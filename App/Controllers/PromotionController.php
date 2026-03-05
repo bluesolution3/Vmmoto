@@ -1,6 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../Models/PromotionModel.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use Twilio\Rest\Client;
 
 class PromotionController {
 
@@ -10,64 +13,109 @@ class PromotionController {
         $this->model = new PromotionModel($pdo);
     }
 
+    // Show promotion page
     public function index() {
 
         $businesses = $this->model->getBusinesses();
+    
         $selectedBusiness = $_GET['business_id'] ?? null;
+    
         $promotions = [];
-
+    
         if ($selectedBusiness) {
             $promotions = $this->model->getPromotionsByBusiness($selectedBusiness);
         }
-
+    
         include __DIR__ . '/../Views/promotion/index.php';
     }
 
-    public function create() {
-        $businesses = $this->model->getBusinesses();
-        include __DIR__ . '/../Views/promotion/create.php';
-    }
+    // Send SMS via Twilio
+    public function send() {
 
-    public function store() {
+        $business_id = $_POST['business_id'] ?? null;
+        $message     = $_POST['message'] ?? '';
 
-        $business_id = $_POST['business_id'];
-        $message = substr($_POST['message'], 0, 320);
+        if (!$business_id || empty($message)) {
+            die("Invalid request.");
+        }
+
+        if (strlen($message) > 320) {
+            die("Message exceeds 320 characters.");
+        }
 
         $subscribers = $this->model->getSubscribersByBusiness($business_id);
 
-        $total = count($subscribers);
+        if (empty($subscribers)) {
+            die("No subscribers found.");
+        }
+
+        $twilio = $this->model->getTwilioConfig();
+
+        $account_sid = $twilio['account_sid'] ?? '';
+        $auth_token  = $twilio['auth_token'] ?? '';
+        $from_number = $twilio['from_number'] ?? '';
+
+        if (!$account_sid || !$auth_token || !$from_number) {
+            die("Twilio configuration missing.");
+        }
+
+        $client = new Client($account_sid, $auth_token);
+
+        // Create promotion entry first
+        $promotion_id = $this->model->createPromotion($business_id, $message);
+
         $success = 0;
         $failure = 0;
 
-        $promotion_id = $this->model->createPromotion($business_id, $message);
-
         foreach ($subscribers as $subscriber) {
 
-            // 🔹 Simulated SMS sending
-            $status = 'success';
+            try {
+                $client->messages->create(
+                    $subscriber['mobile'],
+                    [
+                        'from' => $from_number,
+                        'body' => $message
+                    ]
+                );
 
-            if ($status == 'success') {
+                $this->model->insertLog(
+                    $promotion_id,
+                    $subscriber['id'],
+                    $subscriber['mobile'],
+                    'success'
+                );
+
                 $success++;
-            } else {
+
+            } catch (Exception $e) {
+
+                $this->model->insertLog(
+                    $promotion_id,
+                    $subscriber['id'],
+                    $subscriber['mobile'],
+                    'failed'
+                );
+
                 $failure++;
             }
-
-            $this->model->insertLog(
-                $promotion_id,
-                $subscriber['id'],
-                $subscriber['mobile'],
-                $status
-            );
         }
 
+        // Update counts
         $this->model->updatePromotionCounts(
             $promotion_id,
-            $total,
+            count($subscribers),
             $success,
             $failure
         );
 
-        header("Location: index.php?controller=promotion&action=index&business_id=" . $business_id);
+        header("Location: index.php?controller=promotion&action=index&business_id=" . $business_id . "&sent=1");
         exit;
+    }
+
+    public function create() {
+
+        $businesses = $this->model->getBusinesses();
+    
+        include __DIR__ . '/../Views/promotion/create.php';
     }
 }

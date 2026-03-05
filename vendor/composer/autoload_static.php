@@ -11,6 +11,10 @@ class ComposerStaticInitdcaa7aeca54556be4b9634e675c99f7c
         array (
             'ZipStream\\' => 10,
         ),
+        'T' =>
+        array (
+            'Twilio\\' => 7,
+        ),
         'P' =>
         array (
             'Psr\\SimpleCache\\' => 16,
@@ -37,6 +41,10 @@ class ComposerStaticInitdcaa7aeca54556be4b9634e675c99f7c
         'ZipStream\\' =>
         array (
             0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
+        ),
+        'Twilio\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/twilio/sdk/src/Twilio',
         ),
         'Psr\\SimpleCache\\' =>
         array (
