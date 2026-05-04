@@ -1,4 +1,5 @@
 <?php
 $pageTitle = "Create New Password";
-$viewFile = 'views/auth/partials/reset_form.php';
-include 'views/layouts/auth_master.php';
+$subtitle = "Set a secure new password";
+$viewFile = __DIR__ . '/partials/reset_form.php';
+include __DIR__ . '/../layouts/auth_master.php';

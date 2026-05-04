@@ -1,4 +1,5 @@
 <?php
 $pageTitle = "Forgot Password";
-$viewFile = 'views/auth/partials/forgot_form.php';
-include 'views/layouts/auth_master.php';
+$subtitle = "Enter your registered email";
+$viewFile = __DIR__ . '/partials/forgot_form.php';
+include __DIR__ . '/../layouts/auth_master.php';

@@ -1,4 +1,5 @@
 <?php
 $pageTitle = "OTP Verification";
-$viewFile = 'views/auth/partials/otp_form.php';
-include 'views/layouts/auth_master.php';
+$subtitle = "Enter the verification code";
+$viewFile = __DIR__ . '/partials/otp_form.php';
+include __DIR__ . '/../layouts/auth_master.php';
