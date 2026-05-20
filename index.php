@@ -1,26 +1,21 @@
 <?php
 
-$page = $_GET['page'] ?? 'login';
+$page = $_GET['page'] ?? 'home';
 
 switch($page){
 
-case 'login':
-include 'views/auth/login.php';
+case 'home':
+include __DIR__.'/views/pages/home.php';
 break;
 
-case 'forgot':
-include 'views/auth/forgot.php';
+case 'about':
+include __DIR__.'/views/pages/about.php';
 break;
 
-case 'otp':
-include 'views/auth/otp.php';
-break;
-
-case 'reset':
-include 'views/auth/reset.php';
+case 'contact':
+include __DIR__.'/views/pages/contact.php';
 break;
 
 default:
-include 'views/auth/login.php';
+include __DIR__.'/views/pages/home.php';
 }
-    
